@@ -58,6 +58,8 @@ let rec expr_of_s_exp : s_exp -> expr = function
       False
   | Sym var ->
       Var var
+  | Lst [] ->
+      Nil
   | Lst [Sym "let"; Lst [Lst [Sym var; exp]]; body] ->
       Let (var, expr_of_s_exp exp, expr_of_s_exp body)
   | Lst (Sym "do" :: exps) when List.length exps > 0 ->
