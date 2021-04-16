@@ -209,7 +209,13 @@ let rec compile_expr (defns : defn list) (tab : symtab) (stack_index : int)
           (Symtab.add var stack_index tab)
           (stack_index - 8) is_tail body
   | Do exps ->
-      List.concat_map (compile_expr defns tab stack_index false) exps
+      List.concat
+        (List.mapi
+           (fun i exp ->
+             compile_expr defns tab stack_index
+               (if i = List.length exps - 1 then is_tail else false)
+               exp)
+           exps)
   | Call (f, args) as e when is_defn defns f && is_tail ->
       let defn = get_defn defns f in
       if List.length args = List.length defn.args then
